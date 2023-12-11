@@ -39,9 +39,10 @@ enum SnapCategoryEnum {
   social,
   utilities,
   unknown,
-  ubuntuDesktop;
+  ubuntuDesktop,
+  chart;
 
-  bool get hidden => [unknown, ubuntuDesktop].contains(this);
+  bool get hidden => [unknown, ubuntuDesktop, chart].contains(this);
 
   String get categoryName => name.replaceAllMapped(
       RegExp(r'[A-Z]'), (match) => '-${match[0]!.toLowerCase()}');
@@ -96,6 +97,7 @@ enum SnapCategoryEnum {
         games => l10n.snapCategoryGamesSlogan,
         productivity => l10n.snapCategoryProductivitySlogan,
         ubuntuDesktop => l10n.snapCategoryUbuntuDesktopSlogan,
+        chart => l10n.snapCategoryChartSlogan,
         _ => '',
       };
 

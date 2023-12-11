@@ -6,6 +6,7 @@ import 'package:crypto/crypto.dart';
 import 'package:flutter/material.dart';
 import 'package:glib/glib.dart';
 import 'package:jwt_decode/jwt_decode.dart';
+import 'package:app_center_ratings_client/src/chart.dart';
 
 import 'exports.dart';
 
@@ -52,5 +53,10 @@ class RatingsService {
   Future<List<Vote>> getSnapVotes(String snapId) async {
     await _ensureValidToken();
     return await client.getSnapVotes(snapId, _jwt!);
+  }
+
+  Future<List<ChartData>> getChartData() async {
+    await _ensureValidToken();
+    return await client.getChart(Timeframe.unspecified, _jwt!);
   }
 }

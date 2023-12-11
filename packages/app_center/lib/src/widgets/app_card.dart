@@ -77,6 +77,78 @@ class AppCard extends StatelessWidget {
   }
 }
 
+// TODO: Create an abstract class for all type of cards (Snap/Deb/Chart)
+class ChartCard extends StatelessWidget {
+  const ChartCard({
+    super.key,
+    required this.title,
+    required this.indexRank,
+    this.summary,
+    this.onTap,
+    this.compact = false,
+    this.iconUrl,
+    this.footer,
+  });
+
+  final AppTitle title;
+  final int indexRank;
+  final String? summary;
+  final VoidCallback? onTap;
+  final bool compact;
+  final String? iconUrl;
+  final Widget? footer;
+
+  factory ChartCard.fromSnap({
+    required Snap snap,
+    required int index,
+    VoidCallback? onTap,
+  }) =>
+      ChartCard(
+        key: ValueKey(snap.id),
+        title: AppTitle.fromSnap(snap),
+        indexRank: index + 1,
+        iconUrl: snap.iconUrl,
+        footer: _RatingsInfo(snap: snap),
+        onTap: onTap,
+      );
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+
+    return Flex(
+      direction: compact ? Axis.vertical : Axis.horizontal,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              indexRank.toString(),
+              style: textTheme.titleMedium,
+            ),
+          ],
+        ),
+        const SizedBox(width: kCardSpacing),
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 1),
+          child: AppIcon(
+            iconUrl: iconUrl,
+            size: kIconSize * 2,
+          ),
+        ),
+        const SizedBox(width: kCardSpacing, height: kCardSpacing),
+        Expanded(
+          child: _AppCardBody(
+            title: title,
+            footer: footer,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
 // TODO: generalize
 class SnapImageCard extends StatelessWidget {
   const SnapImageCard({super.key, required this.snap, this.onTap});
@@ -125,13 +197,13 @@ class SnapImageCard extends StatelessWidget {
 class _AppCardBody extends StatelessWidget {
   const _AppCardBody({
     required this.title,
-    required this.summary,
+    this.summary,
     this.footer,
     this.maxlines = 2,
   });
 
   final Widget title;
-  final String summary;
+  final String? summary;
   final Widget? footer;
   final int maxlines;
 
@@ -148,13 +220,14 @@ class _AppCardBody extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 12),
-        Flexible(
-          child: Text(
-            summary,
-            maxLines: maxlines,
-            overflow: TextOverflow.ellipsis,
+        if (summary != null)
+          Flexible(
+            child: Text(
+              summary!,
+              maxLines: maxlines,
+              overflow: TextOverflow.ellipsis,
+            ),
           ),
-        ),
         if (footer != null) ...[
           const SizedBox(height: 8),
           footer!,
@@ -197,7 +270,9 @@ class _RatingsInfo extends ConsumerWidget {
           ],
         );
       },
-      error: (error, stackTrace) => const SizedBox.shrink(),
+      error: (error, stackTrace) {
+        return const SizedBox.shrink();
+      },
       loading: () => const SizedBox.shrink(),
     );
   }

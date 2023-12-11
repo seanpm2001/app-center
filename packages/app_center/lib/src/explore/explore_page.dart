@@ -1,8 +1,12 @@
+import 'package:app_center/src/ratings/ratings_service.dart';
+import 'package:app_center_ratings_client/src/chart.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:snapd/snapd.dart';
+import 'package:ubuntu_service/ubuntu_service.dart';
 import 'package:yaru_icons/yaru_icons.dart';
+import 'package:yaru_widgets/yaru_widgets.dart';
 
 import '/l10n.dart';
 import '/layout.dart';
@@ -42,6 +46,14 @@ class ExplorePage extends ConsumerWidget {
         const _CategorySnapList(
           category: SnapCategoryEnum.featured,
           hideBannerSnaps: true,
+        ),
+        SliverList.list(children: [
+          const SizedBox(height: 56),
+          _Title(text: SnapCategoryEnum.chart.slogan(l10n)),
+          const SizedBox(height: kPagePadding),
+        ]),
+        const _ChartList(
+          numberOfSnaps: 8,
         ),
         SliverList.list(children: [
           const SizedBox(height: 56),
@@ -96,6 +108,61 @@ class _Title extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Text(text, style: Theme.of(context).textTheme.headlineSmall);
+  }
+}
+
+class _ChartList extends ConsumerWidget {
+  const _ChartList({
+    this.numberOfSnaps = 8,
+  });
+  final int numberOfSnaps;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final ratingsService = getService<RatingsService>();
+
+    return FutureBuilder(
+        future: ratingsService.getChartData(),
+        builder: ((context, snapshot) {
+          if (snapshot.hasData && snapshot.data != null) {
+            for (var element in snapshot.data!) {
+              print(element.rating.snapId);
+            }
+
+/* 
+
+            final topChartSnaps = 
+             */
+
+            final categorySnaps = ref
+                .watch(
+                  snapSearchProvider(
+                    SnapSearchParameters(
+                        category: SnapCategoryEnum.development),
+                  ),
+                )
+                .whenOrNull(data: (data) => data);
+
+            final snaps = categorySnaps?.take(numberOfSnaps).toList() ?? [];
+
+            return ChartCardGrid.fromSnaps(
+              snaps: snaps,
+              onTap: (snap) =>
+                  StoreNavigator.pushSnap(context, name: snap.name),
+            );
+            /* final chartSnaps = chartData..map((name) => snaps.singleWhereOrNull((snap) => snap.name == name)).whereNotNull().toList();
+        return ChartCardGrid.fromSnaps(
+          snaps: chartSnaps,
+          onTap: (snap) => StoreNavigator.pushSnap(context, name: snap.name),
+        ); */
+          } else {
+            return ChartCardGrid.fromSnaps(
+              snaps: [],
+              onTap: (snap) =>
+                  StoreNavigator.pushSnap(context, name: snap.name),
+            );
+          }
+        }));
   }
 }
 
