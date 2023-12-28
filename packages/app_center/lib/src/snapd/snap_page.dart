@@ -212,6 +212,7 @@ class _SnapView extends ConsumerWidget {
                         child: Padding(
                           padding: const EdgeInsets.only(bottom: 48),
                           child: ScreenshotGallery(
+                            videoUrl: snapModel.storeSnap?.videoUrl,
                             title: snapModel.storeSnap!.titleOrName,
                             urls: snapModel.storeSnap!.screenshotUrls,
                             height: layout.totalWidth / 2,

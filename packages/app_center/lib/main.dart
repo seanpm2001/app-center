@@ -13,6 +13,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:github/github.dart';
 import 'package:gtk/gtk.dart';
+import 'package:media_kit/media_kit.dart';
 import 'package:packagekit/packagekit.dart';
 import 'package:path/path.dart' as p;
 import 'package:snapcraft_launcher/snapcraft_launcher.dart';
@@ -23,6 +24,7 @@ import 'package:yaru_widgets/yaru_widgets.dart';
 
 Future<void> main(List<String> args) async {
   await YaruWindowTitleBar.ensureInitialized();
+  MediaKit.ensureInitialized();
 
   final binaryName = p.basename(Platform.resolvedExecutable);
   Logger.setup(

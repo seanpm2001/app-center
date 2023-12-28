@@ -8,6 +8,7 @@ extension SnapX on Snap {
       media.where((m) => m.type == 'screenshot').map((m) => m.url).toList();
   bool get starredPublisher => publisher?.validation == 'starred';
   String get titleOrName => title?.orIfEmpty(name) ?? name;
+  String? get videoUrl => media.firstWhereOrNull((m) => m.type == 'video')?.url;
 }
 
 extension on String {
